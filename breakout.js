@@ -71,6 +71,15 @@ function update() {
     // if ball touches bottom of screen
     // gameover
   }
+
+  // bouncing ball off player paddle
+  if (topCollion(ball, player) || bottomCollision(ball, player)) {
+    ball.velocityY *= -1;
+  }
+
+  else if (leftCollision(ball, player) || rightCollision(ball, player)) {
+    ball.velocityX *= -1;
+  }
 }
 
 function outOfBounds(xPosition) {
@@ -91,4 +100,27 @@ function movePlayer(e) {
       player.x = nextPlayerX;
     }
   }
+}
+
+function detectCollision(a, b) {
+  return a.x < b.x + b.width && // a's top right corner doesn't touch b's top right
+    a.x + a.width > b.x &&  // a's top right passes b's top left
+    a.y < b.y + b.height && // a's top left doesn't touch b's bottom left
+    a.y + a.height > b.y;  // a's bottom left corner passes b's top left corner
+}
+
+function topCollion(ball, block) { // ball above block
+  return detectCollision(ball, block) && (ball.y + ball.height) >= block.y;
+}
+
+function bottomCollision(ball, block) {
+  return detectCollision(ball, block) && (block.y + block.height) >= ball.y;
+}
+
+function leftCollision(ball, block) {
+  return detectCollision(ball, block) && (ball.x + ball.width) >= block.x;
+}
+
+function rightCollision(ball, block) {
+  return detectCollision(ball, block) && (block.x + block.width) >= ball.x;
 }

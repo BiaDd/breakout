@@ -31,6 +31,20 @@ let ball = {
   velocityY: ballVelocityY
 }
 
+// blocks
+
+let blockArray = [];
+let blockWidth = 50;
+let blockHeight = 10;
+let blockColumns = 8;
+let blockRows = 3;
+let blockMaxRows = 10;
+let blockCount = 0;
+
+// starting block corners
+let blockX = 15;
+let blockY = 45;
+
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
@@ -42,7 +56,9 @@ window.onload = function () {
   context.fillRect(player.x, player.y, player.width, player.height);
 
   requestAnimationFrame(update);
-  document.addEventListener("keydown", movePlayer)
+  document.addEventListener("keydown", movePlayer);
+
+  createBlocks();
 }
 
 function update() {
@@ -79,6 +95,24 @@ function update() {
 
   else if (leftCollision(ball, player) || rightCollision(ball, player)) {
     ball.velocityX *= -1;
+  }
+
+  context.fillStyle = "skyblue";
+  for (let i = 0; i < blockArray.length; i++) {
+    let block = blockArray[i];
+    if (!block.break) {
+      if (topCollion(ball, block) || bottomCollision(ball, block)) {
+        block.break = true;
+        ball.velocityY *= -1;
+        blockCount -= 1;
+      }
+      if (leftCollision(ball, block) || rightCollision(ball, block)) {
+        block.break = true;
+        ball.velocityX *= -1;
+        blockCount -= 1;
+      }
+      context.fillRect(block.x, block.y, block.width, block.height);
+    }
   }
 }
 
@@ -123,4 +157,21 @@ function leftCollision(ball, block) {
 
 function rightCollision(ball, block) {
   return detectCollision(ball, block) && (block.x + block.width) >= ball.x;
+}
+
+function createBlocks() {
+  blockArray = [];
+  for (let c = 0; c < blockColumns; c++) {
+    for (let r = 0; r < blockRows; r++) {
+      let block = {
+        x: blockX + c * blockWidth + c * 10, // space blocks 10
+        y: blockY + r * blockHeight + r * 10, // space blocks 10
+        width: blockWidth,
+        height: blockHeight,
+        break: false
+      }
+      blockArray.push(block);
+      blockCount = blockArray.length;
+    }
+  }
 }

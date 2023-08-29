@@ -4,15 +4,15 @@ let boardHeight = 500;
 let context;
 
 // player
-let playerWidth = 80;
+let playerWidth = 80; // 500 for testing
 let playerHeight = 10;
 
 let playerVelocityX = 10;
 
 let ballWidth = 10;
 let ballHeight = 10;
-let ballVelocityX = 3;
-let ballVelocityY = 2;
+let ballVelocityX = 3; // 15 for testing
+let ballVelocityY = 2; // 10 for testing
 
 let player = {
   x: boardWidth / 2 - playerWidth / 2,
@@ -45,6 +45,9 @@ let blockCount = 0;
 let blockX = 15;
 let blockY = 45;
 
+let score = 0;
+let gameOver = false;
+
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
@@ -63,6 +66,9 @@ window.onload = function () {
 
 function update() {
   requestAnimationFrame(update);
+  if (gameOver) {
+    return;
+  }
   context.clearRect(0, 0, board.width, board.height);
   //draw initial player
   context.fillStyle = "lightgreen";
@@ -85,7 +91,9 @@ function update() {
 
   else if (ball.y + ball.height >= boardHeight) {
     // if ball touches bottom of screen
-    // gameover
+    context.font = "20px sans-serif";
+    context.fillText("Game Over: Press 'Space' to Restart", 80, 400);
+    gameOver = true;
   }
 
   // bouncing ball off player paddle
@@ -105,15 +113,27 @@ function update() {
         block.break = true;
         ball.velocityY *= -1;
         blockCount -= 1;
+        score += 100;
       }
-      if (leftCollision(ball, block) || rightCollision(ball, block)) {
+      else if (leftCollision(ball, block) || rightCollision(ball, block)) {
         block.break = true;
         ball.velocityX *= -1;
         blockCount -= 1;
+        score += 100;
       }
       context.fillRect(block.x, block.y, block.width, block.height);
     }
   }
+
+  if (blockCount == 0) {
+    score += 100 * blockRows * blockColumns; // bonus points lol
+    blockRows = Math.min(blockRows + 1, blockMaxRows);
+    createBlocks();
+  }
+
+  // score
+  context.font = "20px sans-serif";
+  context.fillText(score, 10, 25);
 }
 
 function outOfBounds(xPosition) {
@@ -121,6 +141,12 @@ function outOfBounds(xPosition) {
 }
 
 function movePlayer(e) {
+  if (gameOver) {
+    if (e.code == "Space") {
+      resetGame();
+    }
+  }
+
   if (e.code == "ArrowLeft") {
     // player.x -= player.velocityX;
     let nextPlayerX = player.x - player.velocityX;
@@ -174,4 +200,29 @@ function createBlocks() {
       blockCount = blockArray.length;
     }
   }
+}
+
+function resetGame() {
+  gameOver = false;
+  player = {
+    x: boardWidth / 2 - playerWidth / 2,
+    y: boardHeight - playerHeight - 5,
+    width: playerWidth,
+    height: playerHeight,
+    velocityX: playerVelocityX
+  }
+
+  ball = {
+    x: boardWidth / 2,
+    y: boardHeight / 2,
+    width: ballWidth,
+    height: ballHeight,
+    velocityX: ballVelocityX,
+    velocityY: ballVelocityY
+  }
+
+  blockRows = 3;
+  blockArray = [];
+  score = 0;
+  createBlocks();
 }

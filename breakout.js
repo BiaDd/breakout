@@ -71,10 +71,10 @@ function update() {
   }
   context.clearRect(0, 0, board.width, board.height);
   //draw initial player
-  context.fillStyle = "lightgreen";
+  context.fillStyle = "#8fb3ff";
   context.fillRect(player.x, player.y, player.width, player.height);
 
-  context.fillStyle = "white";
+  context.fillStyle = "#ebf1ff";
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
   context.fillRect(ball.x, ball.y, ball.width, ball.height);
@@ -105,7 +105,7 @@ function update() {
     ball.velocityX *= -1;
   }
 
-  context.fillStyle = "skyblue";
+  context.fillStyle = "#42fcab";
   for (let i = 0; i < blockArray.length; i++) {
     let block = blockArray[i];
     if (!block.break) {
@@ -149,16 +149,24 @@ function movePlayer(e) {
 
   if (e.code == "ArrowLeft") {
     // player.x -= player.velocityX;
-    let nextPlayerX = player.x - player.velocityX;
-    if (!outOfBounds(nextPlayerX)) {
-      player.x = nextPlayerX;
-    }
+    moveLeft()
   }
   else if (e.code == "ArrowRight") {
-    let nextPlayerX = player.x + player.velocityX;
-    if (!outOfBounds(nextPlayerX)) {
-      player.x = nextPlayerX;
-    }
+    moveRight()
+  }
+}
+
+function moveLeft() {
+  let nextPlayerX = player.x - player.velocityX;
+  if (!outOfBounds(nextPlayerX)) {
+    player.x = nextPlayerX;
+  }
+}
+
+function moveRight() {
+  let nextPlayerX = player.x + player.velocityX;
+  if (!outOfBounds(nextPlayerX)) {
+    player.x = nextPlayerX;
   }
 }
 

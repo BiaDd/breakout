@@ -60,6 +60,8 @@ window.onload = function () {
 
   requestAnimationFrame(update);
   document.addEventListener("keydown", movePlayer);
+  // Mouse moving eventListener and function
+  document.addEventListener("mousemove", mouseMoveHandler, false);
 
   createBlocks();
 }
@@ -149,24 +151,23 @@ function movePlayer(e) {
 
   if (e.code == "ArrowLeft") {
     // player.x -= player.velocityX;
-    moveLeft()
+    let nextPlayerX = player.x - player.velocityX;
+    if (!outOfBounds(nextPlayerX)) {
+      player.x = nextPlayerX;
+    }
   }
   else if (e.code == "ArrowRight") {
-    moveRight()
+    let nextPlayerX = player.x + player.velocityX;
+    if (!outOfBounds(nextPlayerX)) {
+      player.x = nextPlayerX;
+    }
   }
 }
 
-function moveLeft() {
-  let nextPlayerX = player.x - player.velocityX;
-  if (!outOfBounds(nextPlayerX)) {
-    player.x = nextPlayerX;
-  }
-}
-
-function moveRight() {
-  let nextPlayerX = player.x + player.velocityX;
-  if (!outOfBounds(nextPlayerX)) {
-    player.x = nextPlayerX;
+function mouseMoveHandler(e) {
+  var relativeX = e.clientX - board.offsetLeft;
+  if (!outOfBounds(relativeX)) {
+    player.x = relativeX;
   }
 }
 
